@@ -1,0 +1,239 @@
+=== 1. Movies vs TV Shows count ===
+Objective: Understand the proportion of movies compared to TV shows on Netflix.
+Code: df_clean['type'].value_counts()
+Output:
+type
+Movie      6131
+TV Show    2666
+Business Insight:
+Netflix's library is heavily dominated by Movies, which account for roughly 70% of the content. However, TV shows are highly critical for user engagement and retention due to their longer viewing hours.
+--------------------------------------------------
+=== 2. Content added over the years ===
+Objective: Identify when Netflix began rapidly expanding its content library.
+Code: df_clean['year_added'].value_counts().sort_index()
+Output:
+year_added
+2008       2
+2009       2
+2010       1
+2011      13
+2012       3
+2013      11
+2014      24
+2015      82
+2016     429
+2017    1188
+2018    1649
+2019    2016
+2020    1879
+2021    1498
+Business Insight:
+Library expansion started growing exponentially in 2015, peaking around 2019. The subsequent slight dip in additions in 2020-2021 was likely impacted by production shutdowns and delays caused by the COVID-19 pandemic, alongside Netflix focusing on quality/original productions.
+--------------------------------------------------
+=== 3. Top countries producing Netflix content (Exploded) ===
+Objective: Determine the key production hubs for Netflix content.
+Code: df_clean['country'].str.split(', ').explode().value_counts().head(10)
+Output:
+country
+United States     3683
+India             1046
+United Kingdom     803
+Canada             445
+France             393
+Japan              317
+Spain              232
+South Korea        231
+Germany            226
+Mexico             169
+Business Insight:
+The United States remains the largest producer of Netflix content, followed by India and the United Kingdom. This highlights Netflix's strategic investments in Bollywood and British productions to capture local and global viewers.
+--------------------------------------------------
+=== 4. Most common ratings ===
+Objective: Analyze the target audience demographics based on content ratings.
+Code: df_clean['rating'].value_counts()
+Output:
+rating
+TV-MA       3205
+TV-14       2157
+TV-PG        861
+R            799
+PG-13        490
+TV-Y7        333
+TV-Y         306
+PG           287
+TV-G         220
+NR            79
+G             41
+UR            10
+TV-Y7-FV       6
+NC-17          3
+Business Insight:
+TV-MA (Mature Audience) and TV-14 (Parents Strongly Cautioned) are the most dominant ratings. This indicates that Netflix’s primary target audience consists of mature teens and adults, which aligns with its marketing strategy of edgy, high-production dramas and series.
+--------------------------------------------------
+=== 5. Most common genres (Exploded) ===
+Objective: Identify which genres are most heavily stocked on the platform.
+Code: df_clean['listed_in'].str.split(', ').explode().value_counts().head(10)
+Output:
+listed_in
+International Movies        2752
+Dramas                      2427
+Comedies                    1674
+International TV Shows      1350
+Documentaries                869
+Action & Adventure           859
+TV Dramas                    762
+Independent Movies           756
+Children & Family Movies     641
+Romantic Movies              616
+Business Insight:
+International Movies, Dramas, and Comedies are the most common genres. The high prevalence of 'International Movies' reflects Netflix’s localized content strategy, enabling regional films to reach a global subscriber base.
+--------------------------------------------------
+=== 6. Distribution of movie durations ===
+Objective: Examine the standard runtime of movies on the platform.
+Code: df_clean[df_clean['type'] == 'Movie']['duration_num'].describe()
+Output:
+count    6131.000000
+mean       99.564998
+std        28.289504
+min         3.000000
+25%        87.000000
+50%        98.000000
+75%       114.000000
+max       312.000000
+Business Insight:
+The average runtime of a Netflix movie is approximately 99.6 minutes (1h 40m). The standard deviation is ~28 minutes, indicating a wide variety of film lengths, ranging from short films (minimum of 3 minutes) to epic movies (maximum of 312 minutes).
+--------------------------------------------------
+=== 7. Distribution of TV show seasons ===
+Objective: Understand the longevity and release patterns of TV shows.
+Code: df_clean[df_clean['type'] == 'TV Show']['duration_num'].value_counts(normalize=True).head(5) * 100
+Output:
+duration_num
+1.0    67.254314
+2.0    15.791448
+3.0     7.426857
+4.0     3.525881
+5.0     2.400600
+Business Insight:
+Nearly 67% of all TV shows on Netflix end after 1 Season, and only ~14% reach a 2nd Season. Netflix frequently cancels underperforming shows early to optimize budget allocations, relying heavily on fresh Season 1 launches to drive user sign-ups.
+--------------------------------------------------
+=== 8. Top directors by number of titles ===
+Objective: Identify the most prolific directors contributing to the library.
+Code: df_clean['director'].str.split(', ').explode().value_counts().head(10)
+Output:
+director
+Rajiv Chilaka          22
+Jan Suter              21
+Raúl Campos            19
+Marcus Raboy           16
+Suhas Kadav            16
+Jay Karas              15
+Cathy Garcia-Molina    13
+Youssef Chahine        12
+Martin Scorsese        12
+Jay Chapman            12
+Business Insight:
+Rajiv Chilaka (known for Indian animated children's shows), Jan Suter, and Raul Campos top the list. The list is dominated by international directors, showing Netflix's reliance on specific content creators for volume.
+--------------------------------------------------
+=== 9. Top actors appearing in Netflix content ===
+Objective: Identify actors with the highest presence on the platform.
+Code: df_clean['cast'].str.split(', ').explode().value_counts().head(10)
+Output:
+cast
+Anupam Kher         43
+Shah Rukh Khan      35
+Julie Tejwani       33
+Takahiro Sakurai    32
+Naseeruddin Shah    32
+Rupa Bhimani        31
+Om Puri             30
+Akshay Kumar        30
+Yuki Kaji           29
+Amitabh Bachchan    28
+Business Insight:
+Anupam Kher, Shah Rukh Khan, and Naseeruddin Shah (all veteran Indian actors) are the most frequent stars. This underscores the vastness of the Indian film library acquired by Netflix to engage its massive South Asian audience.
+--------------------------------------------------
+=== 10. Content growth trend over time (Cumulative) ===
+Objective: Track the historical size growth of Netflix's catalog.
+Code: df_clean.groupby(['year_added', 'type']).size().unstack(fill_value=0).cumsum()
+Output:
+type        Movie  TV Show
+year_added                
+2017         1193      562
+2018         2430      974
+2019         3854     1566
+2020         5138     2161
+2021         6131     2666
+Business Insight:
+The cumulative volume shows that the platform's library grew aggressively between 2016 and 2019. The rate of growth has slightly flattened recently, indicating a transition from aggressive acquisition to selective content development.
+--------------------------------------------------
+=== 11. Content added by month ===
+Objective: Analyze whether there is seasonality in content uploads.
+Code: df_clean['month_added'].value_counts().reindex(month_order)
+Output:
+month_added
+January      738
+February     563
+March        742
+April        764
+May          632
+June         728
+July         827
+August       755
+September    770
+October      760
+November     705
+December     813
+Business Insight:
+Content additions are relatively stable across the months, but peak in July, December, and January. This corresponds with holiday seasons when viewership is at its highest, optimizing subscriber retention.
+--------------------------------------------------
+=== 12. Release year distribution ===
+Objective: Observe the age of content available in the Netflix library.
+Code: df_clean['release_year'].describe()
+Output:
+count    8797.000000
+mean     2014.183472
+std         8.822191
+min      1925.000000
+25%      2013.000000
+50%      2017.000000
+75%      2019.000000
+max      2021.000000
+Business Insight:
+The median release year is 2017, meaning half of the library consists of very recent releases. However, Netflix also preserves vintage titles, with the oldest film in the dataset dating back to 1925.
+--------------------------------------------------
+=== 13. Movies released per year (Recent 10 years) ===
+Objective: Track the annual releases of movies over the last decade.
+Code: df_clean[df_clean['type'] == 'Movie']['release_year'].value_counts().sort_index().tail(10)
+Output:
+release_year
+2012    173
+2013    225
+2014    264
+2015    398
+2016    658
+2017    767
+2018    767
+2019    633
+2020    517
+2021    277
+Business Insight:
+Movie releases peaked in 2017-2018 with over 700 movies each year. The sharp decline in newer movies after 2018 reflects Netflix's push toward creating its own TV shows/limited series.
+--------------------------------------------------
+=== 14. TV shows released per year (Recent 10 years) ===
+Objective: Track the annual releases of TV shows over the last decade.
+Code: df_clean[df_clean['type'] == 'TV Show']['release_year'].value_counts().sort_index().tail(10)
+Output:
+release_year
+2012     63
+2013     62
+2014     88
+2015    160
+2016    243
+2017    265
+2018    379
+2019    397
+2020    436
+2021    315
+Business Insight:
+TV Show releases peaked in 2020. Unlike movies, TV show releases remained exceptionally strong throughout 2020 and 2021, proving Netflix's commitment to episodic streaming content over standalone films.
+--------------------------------------------------
