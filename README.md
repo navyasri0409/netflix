@@ -259,3 +259,7 @@ netflix-data-analysis/
 - Generated 12 business-focused visualizations.
 - Extracted actionable insights from 8,800+ titles.
 - Created a reusable analytics workflow.
+
+## 📄 License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
